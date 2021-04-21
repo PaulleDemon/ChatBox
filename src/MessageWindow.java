@@ -197,13 +197,14 @@ public class MessageWindow extends JFrame implements ActionListener{
                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh:mm:ss aa");
                    String formattedDate = dateFormat.format(new Date());
 
-                   SwingUtilities.invokeLater(() -> ScrollArea.send_message(message));
+                   String[] date_msg = {formattedDate, message};
+
+                   SwingUtilities.invokeLater(() -> ScrollArea.send_message(date_msg));
 
                    dos.writeUTF(client_name+"#"+ formattedDate +"#"+message);
 
                } catch (Exception e){System.out.println(e);}
             }).start();
-
 
 
         }

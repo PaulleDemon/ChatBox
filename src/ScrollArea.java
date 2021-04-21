@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 public class ScrollArea extends JPanel {
 
@@ -26,19 +28,21 @@ public class ScrollArea extends JPanel {
 
     }
 
-    public static void send_message(String message){
-        JLabel mess_lbl = new JLabel(message, JLabel.RIGHT);
-//        JTextArea mess_lbl = new JTextArea(message);
-//        mess_lbl.setEditable(false);
-//        mess_lbl.setM
+    public static void send_message(String[] message){
+//        JLabel mess_lbl = new JLabel(message, JLabel.RIGHT);
+        System.out.println("Message: "+message[0]+message[1]);
+        CustomLabel mess_lbl = new CustomLabel("", message[1], message[0]);
+
         mess_lbl.setBorder(lbl_padding);
         mess_lbl.setOpaque(true);
         mess_lbl.setBackground(lbl_color);
-        mess_lbl.setAlignmentX(Component.RIGHT_ALIGNMENT);
+//        mess_lbl.setHorizontalAlignment();
 
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(mess_lbl);
         panel.updateUI();
+
+        adjustScroll();
     }
 
     public static void receive_message(String[] message){
@@ -56,6 +60,8 @@ public class ScrollArea extends JPanel {
         panel.add(mess_lbl);
         panel.updateUI();
 
+        adjustScroll();
+
     }
 
     private static void add_remove_user_label(String message){
@@ -70,6 +76,7 @@ public class ScrollArea extends JPanel {
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(mess_lbl);
         panel.updateUI();
+
     }
 
     public static void add_remove_user(String user){
@@ -86,6 +93,17 @@ public class ScrollArea extends JPanel {
         else{
             add_remove_user_label("'" + user + "' Left the room.");
         }
+
+    }
+
+    private static void adjustScroll(){
+
+        SwingUtilities.invokeLater(() -> {
+            JScrollBar sb = scroll_area.getVerticalScrollBar();
+            sb.setValue(sb.getMaximum());
+        });
+
+
 
     }
 
