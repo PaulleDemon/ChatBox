@@ -14,7 +14,12 @@ public class Login extends JPanel{
 
         setLayout(new GridLayout());
         user_name = new JLabel("Enter Your name: ");
+        user_name.setForeground(new Color(227, 225, 225));
+
         userName_text = new JTextField();
+        userName_text.setCaretColor(new Color(227, 225, 225));
+        userName_text.setBackground(new Color(94, 93, 93));
+        userName_text.setForeground(new Color(227, 225, 225));
 
         g_constraint.fill = GridBagConstraints.HORIZONTAL;
         g_constraint.gridx = 0;
@@ -29,8 +34,7 @@ public class Login extends JPanel{
         g_constraint.ipadx = 250;
 
         add(userName_text, g_constraint);
-
-
+        setBackground(new Color(59, 56, 56));
     }
 
     public static String get_user_name(){

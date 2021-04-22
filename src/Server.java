@@ -74,7 +74,6 @@ class ClientHandler implements Runnable
             {
 
                 received = dis.readUTF();
-                System.out.println(received);
                 String[] client_msg = received.split("#", 3);
 
 

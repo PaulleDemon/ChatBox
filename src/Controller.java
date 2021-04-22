@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
+import java.awt.*;
 import java.io.IOException;
 
 public class Controller {
@@ -7,6 +9,13 @@ public class Controller {
 
     Controller() throws IOException {
         Login login = new Login();
+
+        UIManager.put("OptionPane.background",new ColorUIResource(59, 56, 56));
+        UIManager.put("Panel.background",new ColorUIResource(59, 56, 56));
+
+        UIManager.put("OptionPane.foreground", new ColorUIResource(227, 225, 225));
+        UIManager.put("Button.background", new Color(55, 138, 211));
+        UIManager.put("Button.foreground", new Color(227, 225, 225));
 
         int result = JOptionPane.showConfirmDialog(null, login,"Join", JOptionPane.DEFAULT_OPTION,
                                                                                         JOptionPane.PLAIN_MESSAGE);
