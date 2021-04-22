@@ -9,10 +9,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.Date;
 import java.util.Scanner;
 
@@ -31,11 +29,16 @@ public class MessageWindow extends JFrame implements ActionListener{
     private static GridBagConstraints g_constraint = new GridBagConstraints();
     private Insets inset = new Insets(5, 5, 5, 5);
 
-//    private static String user_name="";
-
     MessageWindow(String name) throws IOException {
 
-//        user_name = name;
+        text_area.setBackground(new Color(59, 56, 56));
+        text_area.setForeground(new Color(227, 225, 225));
+        text_area.setFont(new Font(text_area.getFont().getFontName(), Font.PLAIN, 20));
+        text_area.setCaretColor(new Color(227, 225, 225));
+
+        panel.setBackground(new Color(59, 56, 56));
+
+        send_btn.setBackground(new Color(55, 138, 211));
 
         g_constraint.fill = GridBagConstraints.BOTH;
         g_constraint.insets = inset;
@@ -100,35 +103,11 @@ public class MessageWindow extends JFrame implements ActionListener{
         String text = text_area.getText().trim();
 
         if (text.length() > 0) {
-//            text = breakWords(text, 10);
-//            System.out.println(text);
-
             text_area.setText("");
             Client.sendMessage(text);
         }
     }
 
-
-
-//    private String breakWords(String str, int width){
-//
-//        String new_string = "";
-//
-//        for (int i=0; i<str.length(); i++){
-//            if (i%width == 0){
-//                new_string += "\n";
-//            }
-//            new_string += str.charAt(i);
-//        }
-////        new_string += "</html>";
-//        return new_string;
-//    }
-
-    // todo: Label taking all the space
-    private String breakWords(String str, int width){
-        final String html = "<html><body style='width: %1spx;'>%1s";
-        return String.format(html, width, str);
-    }
 
     // handle incoming and outgoing messages
     public static class Client {
@@ -136,6 +115,7 @@ public class MessageWindow extends JFrame implements ActionListener{
 
         final static int ServerPort = 1234;
         final static String QUITMESSAGE = "!--QUIT-->";
+        final static String JOINEDMESSAGE = "!--Joined-->";
 
         private static InetAddress ip;
         private static Socket s;
@@ -155,38 +135,20 @@ public class MessageWindow extends JFrame implements ActionListener{
         public static void start() throws IOException {
             Scanner scn = new Scanner(System.in);
 
-            // getting localhost ip
-            InetAddress ip = InetAddress.getByName("localhost");
 
-            // establish the connection
+            InetAddress ip = InetAddress.getByName("localhost");
             Socket s = new Socket(ip, ServerPort);
 
             // obtaining input and out streams
             dis = new DataInputStream(s.getInputStream());
             dos = new DataOutputStream(s.getOutputStream());
 
+            dos.writeUTF(client_name+"# #"+ JOINEDMESSAGE);
+
             receiveMessage();
 
         }
 
-
-        /*private static void _sendMessage(String message){
-
-            try {
-                // write on the output stream
-                System.out.println("ClientName: "+ client_name);
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy hh.mm.ss.S aa");
-                String formattedDate = dateFormat.format(new Date()).toString();
-
-                dos.writeUTF(client_name+"#"+ formattedDate +"#"+message);
-//              ScrollArea.send_message(message);
-
-                System.out.println(message);
-
-            } catch (IOException e){e.printStackTrace(); System.out.println("SEND ERROR");}
-
-        }*/
 
 
         public static void sendMessage(String message){
@@ -215,13 +177,20 @@ public class MessageWindow extends JFrame implements ActionListener{
             new Thread(() -> { // lambda function
                 while (running) {
                     try {
-                        // read the message sent to this client
+
                         String msg = dis.readUTF();
 
-                        String[] client_msg = msg.split("#", 3);
-                        System.out.println("Received Msg: "+String.join(": ", client_msg) + ";" +client_msg[0]);
+                        String[] client_msg = msg.split("#", 3);  // client-name, date, message
 
-                        SwingUtilities.invokeLater(() -> ScrollArea.receive_message(client_msg));
+                        if (!client_msg[2].equals(QUITMESSAGE) && !client_msg[2].equals(JOINEDMESSAGE))
+                            SwingUtilities.invokeLater(() -> ScrollArea.receive_message(client_msg));
+
+                        if(client_msg[2].equals(JOINEDMESSAGE)){
+                            SwingUtilities.invokeLater(()-> ScrollArea.add_remove_user(client_msg[0]));
+                        }
+
+                        if(client_msg[2].equals(QUITMESSAGE))
+                            SwingUtilities.invokeLater(() -> ScrollArea.add_remove_user(client_msg[0], true));
 
                     } catch (IOException e) { System.out.println("Receive ERROR"+e);}
 

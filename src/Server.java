@@ -1,5 +1,3 @@
-
-
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -14,7 +12,7 @@ public class Server
 
     public static void main(String[] args) throws IOException
     {
-        // server is listening on port 1234
+
         ServerSocket ss = new ServerSocket(1234);
 
         Socket s;
@@ -35,21 +33,11 @@ public class Server
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
 
-            // Create a new handler object for handling this request.
             ClientHandler mtch = new ClientHandler(s,  dis, dos);
-
-            // Create a new Thread with this object.
             Thread t = new Thread(mtch);
-
-            System.out.println("Adding client to active client list");
-
-            // add this client to active clients list
             ar.add(mtch);
 
-            // start the thread.
             t.start();
-
-
             System.out.println("RECIPANTS: "+ar);
 
         }
@@ -67,14 +55,14 @@ class ClientHandler implements Runnable
     Socket s;
     boolean isloggedin;
 
-    // constructor
-    public ClientHandler(Socket s,
-                         DataInputStream dis, DataOutputStream dos) {
+
+    public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos) {
         this.dis = dis;
         this.dos = dos;
         this.s = s;
         this.isloggedin=true;
     }
+
 
     @Override
     public void run() {
@@ -82,22 +70,17 @@ class ClientHandler implements Runnable
         String received;
         while (true)
         {
-
             try
             {
-                // receive the string
+
                 received = dis.readUTF();
                 System.out.println(received);
                 String[] client_msg = received.split("#", 3);
 
-                System.out.println("RECIPANT Client: "+Server.ar);
 
-                // search for the recipient in the connected devices list.
-                // ar is the vector storing client of active users
                 for (ClientHandler mc : Server.ar)
                 {
-
-                    if (mc != this && mc.isloggedin)
+                    if (mc != this && mc.isloggedin) //send to only other clients
                     {
                         try{
                             mc.dos.writeUTF(received);} catch (Exception e){System.out.println(e);}
