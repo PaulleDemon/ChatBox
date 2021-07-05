@@ -9,4 +9,4 @@ A simple chat application using socket programming in java.
 
 **Guide**
 
-Run the server first, then the client. I have to done error handeling with that respect.
+Run the server first, then the client. I have not done error handeling with that respect.
